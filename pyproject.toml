@@ -1,0 +1,83 @@
+[tool.poetry]
+name = "sepolia-faucet"
+version = "0.1.0"
+description = ""
+authors = ["Mikhail Makeev <mihail.makeev@gmail.com>"]
+readme = "README.md"
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.13"
+django = "^5.1.3"
+djangorestframework = "^3.15.2"
+drf-spectacular = "^0.27.2"
+djangorestframework-dataclasses = "^1.3.1"
+gunicorn = "^23.0.0"
+dataclasses-json = "^0.6.7"
+
+
+[tool.poetry.group.dev.dependencies]
+isort = "^5.13.2"
+poethepoet = "^0.29.0"
+marshmallow = "^3.23.1"
+pytest = "^8.3.3"
+django-stubs = "^5.1.1"
+ruff = "^0.7.4"
+mypy = "^1.13.0"
+faker = "^33.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poe.tasks]
+isort = "isort src"
+ruff_format = "ruff format"
+format = ["isort", "ruff_format"]
+test = "pytest -v -s src"
+django_test = "sh -c 'cd src && python manage.py test'"
+lint = "ruff check --fix"
+mypy = "mypy src"
+full_check = ["format", "lint", "mypy", "test"]
+
+[tool.isort]
+skip_glob = ["src/external/**"]
+
+[tool.ruff]
+line-length = 120
+indent-width = 4
+target-version = "py313"
+exclude = [
+    ".venv",
+    ".env",
+    ".git",
+    ".pytest_cache",
+    ".mypy_cache",
+    "migrations",
+    "src/external/",
+    "manage.py"
+]
+
+[tool.ruff.lint]
+fixable = ["ALL"]
+ignore = []
+
+[tool.mypy]
+plugins = ["mypy_django_plugin.main"]
+disable_error_code = ["attr-defined"]
+ignore_missing_imports = true
+explicit_package_bases = true
+python_version = "3.13"
+warn_return_any = true
+disallow_untyped_defs = false
+check_untyped_defs = true
+mypy_path = "src"
+exclude = [
+    'src/infrastructure/',
+    'src/external/',
+]
+
+[tool.django-stubs]
+django_settings_module = 'infrastructure.project.settings'
+strict_settings = true

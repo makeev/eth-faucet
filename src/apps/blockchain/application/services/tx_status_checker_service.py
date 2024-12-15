@@ -31,6 +31,7 @@ class TxStatusCheckerService:
                     if tx_status != TransactionStatus.PENDING:
                         transaction.status = tx_status
                         self.faucet_transactions_repository.update(transaction)
+                        logger.info(f"Transaction {tx_hash.value} status: {tx_status.value}")
             finally:
                 sleep(self.loop_timeout_seconds)
 

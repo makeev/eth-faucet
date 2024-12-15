@@ -18,8 +18,8 @@ class DjangoContainer(containers.DeclarativeContainer):
     blockchain_service = providers.Factory(
         BlockchainService,
         provider_url=config.BLOCKCHAIN_PROVIDER_URL,
-        mnemonic=config.FAUCET_MNEMONIC_KEY,
         chain_id=config.BLOCKCHAIN_CHAIN_ID,
+        account=config.FAUCET_ACCOUNT,
     )
 
     faucet_service = providers.Factory(
@@ -47,9 +47,9 @@ def get_app_container():
         {
             "BLOCKCHAIN_PROVIDER_URL": settings.BLOCKCHAIN_PROVIDER_URL,
             "BLOCKCHAIN_CHAIN_ID": settings.BLOCKCHAIN_CHAIN_ID,
-            "FAUCET_MNEMONIC_KEY": settings.FAUCET_MNEMONIC_KEY,
             "FAUCET_THRESHOLD_TIMEOUT_MINUTES": settings.FAUCET_THRESHOLD_TIMEOUT_MINUTES,
             "FAUCET_AMOUNT_ETH": settings.FAUCET_AMOUNT_ETH,
+            "FAUCET_ACCOUNT": settings.FAUCET_ACCOUNT,
         }
     )
     return container

@@ -28,7 +28,11 @@ class WalletAddress:
             raise ValueError(f"Invalid Ethereum address: {self.value}")
 
         checksummed = Web3.to_checksum_address(self.value)
-        object.__setattr__(self, "value", checksummed)
+        object.__setattr__(self, "value", str(checksummed))
+
+    @property
+    def checksum_address(self):
+        return Web3.to_checksum_address(self.value)
 
 
 @dataclass(frozen=True)

@@ -10,8 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import logging
 import os
 from pathlib import Path
+
+from eth_account import Account
+from eth_account.signers.local import LocalAccount
+
+logger = logging.getLogger(__name__)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -146,8 +152,19 @@ if not BLOCKCHAIN_PROVIDER_URL or not BLOCKCHAIN_CHAIN_ID:
     raise ValueError("BLOCKCHAIN_PROVIDER_URL and BLOCKCHAIN_CHAIN_ID are required")
 
 FAUCET_MNEMONIC_KEY = os.getenv("FAUCET_MNEMONIC_KEY")
-if not FAUCET_MNEMONIC_KEY:
-    raise ValueError("FAUCET_MNEMONIC_KEY is required")
+FAUCET_PRIVATE_KEY = os.getenv("FAUCET_PRIVATE_KEY")
+
+
+FAUCET_ACCOUNT: LocalAccount
+if FAUCET_MNEMONIC_KEY:
+    Account.enable_unaudited_hdwallet_features()
+    FAUCET_ACCOUNT = Account.from_mnemonic(FAUCET_MNEMONIC_KEY)
+    logger.info(f"Using account {FAUCET_ACCOUNT.address} from mnemonic phrase")
+elif FAUCET_PRIVATE_KEY:
+    FAUCET_ACCOUNT = Account.from_key(FAUCET_PRIVATE_KEY)
+    logger.info(f"Using account {FAUCET_ACCOUNT.address} from private key")
+else:
+    raise ValueError("FAUCET_MNEMONIC_KEY or FAUCET_PRIVATE_KEY is required")
 
 FAUCET_THRESHOLD_TIMEOUT_MINUTES = int(os.getenv("FAUCET_THRESHOLD_TIMEOUT_MINUTES", 1))
 FAUCET_AMOUNT_ETH = os.getenv("FAUCET_AMOUNT_ETH", "0.0001")

@@ -23,6 +23,7 @@ class Id:
         __bool__() -> bool:
             Returns True if the Id value is not None, otherwise False.
     """
+
     value: str | None
 
     def __init__(self, value: str | int | UUID | None = None):
@@ -61,6 +62,7 @@ class RequiredId(Id):
         __init__(value: str | int | UUID | Id | Any):
             Initializes the RequiredId instance. Raises a ValueError if the provided value is None or if the value of an Id instance is None.
     """
+
     value: str
 
     def __init__(self, value: str | int | UUID | Id | Any):

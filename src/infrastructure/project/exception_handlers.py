@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
 
-from base.exceptions import BaseForbiddenError, BaseNotFoundError, BaseValidationError
+from base.exceptions import BaseForbiddenError, BaseNotFoundError, BaseResponseError, BaseValidationError
 
 
 def custom_exception_handler(exc, context):
@@ -22,5 +22,7 @@ def custom_exception_handler(exc, context):
         if exc.field:
             return Response({exc.field: [str(exc)]}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+    elif isinstance(exc, BaseResponseError):
+        return Response({"detail": str(exc)}, status=exc.code)
 
     return None

@@ -12,6 +12,7 @@ class BaseEntity(ABC):
     Attributes:
         id (Id): The unique identifier for the entity.
     """
+
     id: Id
 
     def __eq__(self, other):

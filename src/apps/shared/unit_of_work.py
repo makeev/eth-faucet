@@ -12,6 +12,7 @@ class UnitOfWork(ABC):
         __enter__: Enter the runtime context related to this object.
         __exit__: Exit the runtime context related to this object.
     """
+
     @abstractmethod
     def __enter__(self):
         pass

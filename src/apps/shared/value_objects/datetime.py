@@ -107,3 +107,6 @@ class DomainDateTime:
     @property
     def tzinfo(self) -> ZoneInfo | None:
         return self.dt.tzinfo if isinstance(self.dt.tzinfo, ZoneInfo) else None
+
+    def is_today(self) -> bool:
+        return self.dt.date() == datetime.now(self.dt.tzinfo).date()

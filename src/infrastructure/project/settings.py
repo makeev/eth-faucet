@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_spectacular",
     "infrastructure",
-    "django_json_widget",
 ]
 
 MIDDLEWARE = [
@@ -136,3 +135,16 @@ REST_FRAMEWORK = {
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "noreply@localhost"
+
+# App settings
+BLOCKCHAIN_PROVIDER_URL = os.getenv("BLOCKCHAIN_PROVIDER_URL")
+BLOCKCHAIN_CHAIN_ID = int(os.getenv("BLOCKCHAIN_CHAIN_ID", "0"))
+if not BLOCKCHAIN_PROVIDER_URL or not BLOCKCHAIN_CHAIN_ID:
+    raise ValueError("BLOCKCHAIN_PROVIDER_URL and BLOCKCHAIN_CHAIN_ID are required")
+
+FAUCET_MNEMONIC_KEY = os.getenv("FAUCET_MNEMONIC_KEY")
+if not FAUCET_MNEMONIC_KEY:
+    raise ValueError("FAUCET_MNEMONIC_KEY is required")
+
+FAUCET_THRESHOLD_TIMEOUT_MINUTES = int(os.getenv("FAUCET_THRESHOLD_TIMEOUT_MINUTES", 1))
+FAUCET_AMOUNT_ETH = os.getenv("FAUCET_AMOUNT_ETH", "0.0001")

@@ -4,7 +4,7 @@ from eth_account import Account
 from web3 import Web3
 from web3.types import TxParams
 
-from apps.blockchain.domain.value_objects import TokenAmount, WalletAddress
+from apps.blockchain.domain.value_objects import TokenAmount, TransactionHash, TransactionStatus, WalletAddress
 
 logger = logging.getLogger(__name__)
 
@@ -35,3 +35,24 @@ class BlockchainService:
         signed_tx = self.account.sign_transaction(tx)
         tx_hash = self.web3.eth.send_raw_transaction(signed_tx.raw_transaction)
         return tx_hash.hex()
+
+    def get_transaction_status(self, tx_hash: TransactionHash) -> TransactionStatus:
+        """
+        Check transaction status by hash.
+        """
+        try:
+            # Get transaction
+            tx_receipt = self.web3.eth.get_transaction_receipt(tx_hash.bytes)
+
+            if tx_receipt is None:
+                return TransactionStatus.PENDING
+
+            # Check transaction status
+            # status 1 = success, status 0 = failure
+            if tx_receipt.get("status") == 1:
+                return TransactionStatus.SUCCESS
+            return TransactionStatus.FAILED
+        except Exception as e:
+            logger.error(f"Error checking transaction status for {tx_hash.value}: {str(e)}")
+            # TODO: maybe better to return PENDING here? OR some other status like UNKNOWN?
+            return TransactionStatus.FAILED

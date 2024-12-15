@@ -2,6 +2,8 @@ import ipaddress
 from dataclasses import dataclass
 from enum import Enum
 
+from eth_typing.encoding import HexStr
+from hexbytes import HexBytes
 from web3 import Web3
 from web3.types import Wei
 
@@ -35,6 +37,10 @@ class TransactionHash:
 
     def __post_init__(self):
         object.__setattr__(self, "value", Web3.to_hex(hexstr=self.value.lower()))  # type: ignore
+
+    @property
+    def bytes(self) -> HexBytes:
+        return HexBytes(Web3.to_bytes(hexstr=HexStr(self.value)))
 
 
 @dataclass(frozen=True)

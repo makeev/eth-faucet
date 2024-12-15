@@ -8,6 +8,8 @@ from user_interface.utils import extend_schema
 
 from ..response import TypedResponse
 
+app_container = get_app_container()
+
 
 class InputParamsSerializer(BaseSerializer):
     """We usig serializers for input parameters validation only"""
@@ -26,7 +28,6 @@ class FundWalletView(APIView):
         serializer.is_valid(raise_exception=True)
         ip_address = self._get_ip_address(request)
 
-        app_container = get_app_container()
         transaction_dto = app_container.faucet_service().fund_wallet(
             serializer.validated_data["wallet_address"],  # type: ignore
             ip_address,

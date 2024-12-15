@@ -8,5 +8,5 @@ class FaucetTransactionDTO(BaseDTO):
     tx_hash: str
 
     @classmethod
-    def from_entity(cls, entity):
+    def from_entity(cls, entity) -> "FaucetTransactionDTO":
         return cls(tx_hash=entity.tx_hash.value)

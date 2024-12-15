@@ -3,6 +3,7 @@ from django.conf import settings
 
 from apps.blockchain.application.services.blockchain_service import BlockchainService
 from apps.blockchain.application.services.faucet_service import FaucetService
+from apps.blockchain.application.services.tx_status_checker_service import TxStatusCheckerService
 from infrastructure.repositories.django_faucet_repository import DjangoFaucetTransactionsRepository
 
 
@@ -27,6 +28,13 @@ class DjangoContainer(containers.DeclarativeContainer):
         faucet_transactions_repository=faucet_repository,
         threshold_timeout_minutes=config.FAUCET_THRESHOLD_TIMEOUT_MINUTES,
         amount_eth=config.FAUCET_AMOUNT_ETH,
+    )
+
+    tx_status_checker_service = providers.Factory(
+        TxStatusCheckerService,
+        blockchain_service=blockchain_service,
+        faucet_transactions_repository=faucet_repository,
+        loop_timeout_seconds=5,  # check for new txs every 5 seconds
     )
 
 

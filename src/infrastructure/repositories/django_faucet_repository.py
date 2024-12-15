@@ -16,7 +16,7 @@ class DjangoFaucetTransactionsRepository(IFaucetTransactionsRepository):
     def create(self, faucet_transaction: FaucetTransaction) -> FaucetTransaction:
         """Create a new faucet transaction or raise an exception if it already exists."""
         obj = FaucetTransactionModel.objects.create(
-            tx_hash=faucet_transaction.tx_hash.value if faucet_transaction.tx_hash else None,
+            tx_hash=faucet_transaction.tx_hash.value,
             status=faucet_transaction.status.value,
             ip_address=faucet_transaction.ip_address.value,
             wallet=faucet_transaction.wallet.value,
@@ -24,6 +24,18 @@ class DjangoFaucetTransactionsRepository(IFaucetTransactionsRepository):
             error=faucet_transaction.error if faucet_transaction.error else None,
         )
         faucet_transaction.id = RequiredId(obj.pk)
+        return faucet_transaction
+
+    def update(self, faucet_transaction: FaucetTransaction) -> FaucetTransaction:
+        """Update an existing faucet transaction."""
+        obj = FaucetTransactionModel.objects.get(pk=faucet_transaction.pk.value)
+        obj.tx_hash = faucet_transaction.tx_hash.value
+        obj.status = faucet_transaction.status.value
+        obj.ip_address = faucet_transaction.ip_address.value
+        obj.wallet = faucet_transaction.wallet.value
+        obj.amount = faucet_transaction.amount.to_wei()
+        obj.error = faucet_transaction.error if faucet_transaction.error else None
+        obj.save()
         return faucet_transaction
 
     def get_last_by_ip(self, ip_address: str) -> FaucetTransaction | None:
@@ -41,6 +53,10 @@ class DjangoFaucetTransactionsRepository(IFaucetTransactionsRepository):
         except FaucetTransactionModel.DoesNotExist:
             return None
         return self.model_to_entity(obj)
+
+    def get_pending_transactions(self) -> list[FaucetTransaction]:
+        qs = FaucetTransactionModel.objects.filter(status=TransactionStatus.PENDING.value)
+        return [self.model_to_entity(obj) for obj in qs]
 
     @classmethod
     def model_to_entity(cls, model: FaucetTransactionModel) -> FaucetTransaction:

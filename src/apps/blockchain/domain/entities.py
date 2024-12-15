@@ -13,7 +13,7 @@ from base.entity import BaseEntity
 
 @dataclass
 class FaucetTransaction(BaseEntity):
-    tx_hash: TransactionHash | None
+    tx_hash: TransactionHash
     status: TransactionStatus
     ip_address: IPAddress
     wallet: WalletAddress

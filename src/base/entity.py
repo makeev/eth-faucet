@@ -2,6 +2,7 @@ from abc import ABC
 from dataclasses import dataclass
 
 from apps.shared.value_objects import Id
+from apps.shared.value_objects.id import RequiredId
 
 
 @dataclass
@@ -14,6 +15,10 @@ class BaseEntity(ABC):
     """
 
     id: Id
+
+    def pk(self) -> RequiredId:
+        assert self.id, "Entity not saved yet"
+        return RequiredId(self.id)
 
     def __eq__(self, other):
         """For easy comparison of entities"""

@@ -37,9 +37,6 @@ The **Infrastructure Layer** provides the technical capabilities that other laye
 ### Repositories
 **Infrastructure Repositories** implement the repository interfaces defined in the domain. For example, `CustomerRepository` might implement `ICustomerRepository` and handle the logic for retrieving or saving `Customer` entities in a relational database, a NoSQL store, or the cloud.
 
-### DAO - Data Access Objects
-**DAOs** (Data Access Objects) offer low-level data access operations (CRUD) for specific persistence mechanisms. They help implement the repository methods in a DRY (Don’t Repeat Yourself) manner. For instance, a `CustomerDAO` might handle the actual SQL queries and result set mappings, while the `CustomerRepository` orchestrates these DAOs to fulfill domain-level persistence needs.
-
 ## User Interface Layer
 
 The **User Interface Layer** (or Presentation Layer) is where the system interacts with external users or other systems. It might include endpoints, controllers, views, templates, or GraphQL resolvers. The UI layer takes incoming requests, delegates the required operations to Application Services, and returns responses in a user-friendly format.

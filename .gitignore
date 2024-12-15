@@ -17,3 +17,6 @@ wheels/
 # IDE files
 .idea/
 .vscode/
+
+# Docker files
+postgres_data/

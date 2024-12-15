@@ -16,6 +16,7 @@ class BaseEntity(ABC):
 
     id: Id
 
+    @property
     def pk(self) -> RequiredId:
         assert self.id, "Entity not saved yet"
         return RequiredId(self.id)

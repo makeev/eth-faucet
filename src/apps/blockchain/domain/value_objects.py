@@ -40,6 +40,8 @@ class TransactionHash:
 
     @property
     def bytes(self) -> HexBytes:
+        if self.value.startswith("0x"):
+            HexBytes(Web3.to_bytes(hexstr=HexStr(self.value[2:])))
         return HexBytes(Web3.to_bytes(hexstr=HexStr(self.value)))
 
 

@@ -1,4 +1,4 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 from infrastructure.container import get_app_container
 
@@ -14,6 +14,3 @@ class Command(BaseCommand):
         except KeyboardInterrupt:
             app_container.tx_status_checker_service().stop()
             self.stdout.write(self.style.SUCCESS("TxStatusCheckerService stopped"))
-        except Exception as e:
-            app_container.tx_status_checker_service().stop()
-            raise CommandError(f"Error: {e}")

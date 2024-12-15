@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db.models import Count, Q
 
 from apps.blockchain.domain.entities import FaucetTransaction
@@ -22,7 +24,7 @@ class DjangoFaucetTransactionsRepository(IFaucetTransactionsRepository):
             status=faucet_transaction.status.value,
             ip_address=faucet_transaction.ip_address.value,
             wallet=faucet_transaction.wallet.value,
-            amount=faucet_transaction.amount.to_wei(),
+            amount=Decimal(faucet_transaction.amount.to_wei()),
             error=faucet_transaction.error if faucet_transaction.error else None,
         )
         faucet_transaction.id = RequiredId(obj.pk)
@@ -35,7 +37,7 @@ class DjangoFaucetTransactionsRepository(IFaucetTransactionsRepository):
         obj.status = faucet_transaction.status.value
         obj.ip_address = faucet_transaction.ip_address.value
         obj.wallet = faucet_transaction.wallet.value
-        obj.amount = faucet_transaction.amount.to_wei()
+        obj.amount = Decimal(faucet_transaction.amount.to_wei())
         obj.error = faucet_transaction.error if faucet_transaction.error else None
         obj.save()
         return faucet_transaction
@@ -79,7 +81,7 @@ class DjangoFaucetTransactionsRepository(IFaucetTransactionsRepository):
             status=TransactionStatus(model.status),
             ip_address=IPAddress(model.ip_address),
             wallet=WalletAddress(model.wallet),
-            amount=TokenAmount(model.amount),
+            amount=TokenAmount.from_int(int(model.amount)),
             created_at=DomainDateTime(model.created_at),
             error=model.error if model.error else None,
         )

@@ -58,25 +58,25 @@ class FaucetService:
         """
         Creates a new faucet transaction and funds the wallet with the given amount.
         """
-        # Check if there are too many transactions from the same IP address or wallet address
-        ip = IPAddress(ip_address)
-        last_ip_tx = self.faucet_transactions_repository.get_last_by_ip(ip.value)
-        if last_ip_tx:
-            minimum_next_tx_time = last_ip_tx.created_at + timedelta(minutes=self.threshold_timeout_minutes)
-            if DomainDateTime.now() < minimum_next_tx_time:
-                raise TooManyTransactionsFromIpError(ip)
-
-        # Check if there are too many transactions from the same wallet address
-        wallet = WalletAddress(wallet_address)
-        last_wallet_tx = self.faucet_transactions_repository.get_last_by_wallet(wallet.value)
-        if last_wallet_tx:
-            minimum_next_tx_time = last_wallet_tx.created_at + timedelta(minutes=self.threshold_timeout_minutes)
-            if DomainDateTime.now() < minimum_next_tx_time:
-                raise TooManyTransactionsFromWalletError(wallet)
-
         tx_hash = None
 
         try:
+            # Check if there are too many transactions from the same IP address or wallet address
+            ip = IPAddress(ip_address)
+            last_ip_tx = self.faucet_transactions_repository.get_last_by_ip(ip.value)
+            if last_ip_tx:
+                minimum_next_tx_time = last_ip_tx.created_at + timedelta(minutes=self.threshold_timeout_minutes)
+                if DomainDateTime.now() < minimum_next_tx_time:
+                    raise TooManyTransactionsFromIpError(ip)
+
+            # Check if there are too many transactions from the same wallet address
+            wallet = WalletAddress(wallet_address)
+            last_wallet_tx = self.faucet_transactions_repository.get_last_by_wallet(wallet.value)
+            if last_wallet_tx:
+                minimum_next_tx_time = last_wallet_tx.created_at + timedelta(minutes=self.threshold_timeout_minutes)
+                if DomainDateTime.now() < minimum_next_tx_time:
+                    raise TooManyTransactionsFromWalletError(wallet)
+
             # Send funds to the wallet
             token_amount = TokenAmount.from_ether(self.amount_eth)
             tx_hash = self.blockchain_service.send_funds(wallet, token_amount)

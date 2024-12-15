@@ -26,7 +26,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS: list[str] = []
+ALLOWED_HOSTS: list[str] = ["*"]
 
 
 # Application definition
@@ -76,11 +76,14 @@ WSGI_APPLICATION = "infrastructure.project.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("POSTGRES_DB", "django_db"),
+        "USER": os.getenv("POSTGRES_USER", "django_user"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "django_password"),
+        "HOST": os.getenv("POSTGRES_HOST", "localhost"),
+        "PORT": int(os.getenv("POSTGRES_PORT", 5432)),
     }
 }
 

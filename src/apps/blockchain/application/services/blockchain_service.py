@@ -54,5 +54,5 @@ class BlockchainService:
             return TransactionStatus.FAILED
         except Exception as e:
             logger.error(f"Error checking transaction status for {tx_hash.value}: {str(e)}")
-            # TODO: maybe better to return PENDING here? OR some other status like UNKNOWN?
-            return TransactionStatus.FAILED
+            # TODO: maybe better not to return PENDING here? OR some other status like UNKNOWN?
+            return TransactionStatus.PENDING

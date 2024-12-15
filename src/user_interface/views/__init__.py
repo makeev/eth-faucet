@@ -1,3 +1,3 @@
-from .faucet import FundWalletView
+from .faucet import FundWalletView, StatsView
 
-__all__ = ["FundWalletView"]
+__all__ = ["FundWalletView", "StatsView"]

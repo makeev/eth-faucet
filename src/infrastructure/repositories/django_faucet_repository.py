@@ -1,3 +1,5 @@
+from django.db.models import Count, Q
+
 from apps.blockchain.domain.entities import FaucetTransaction
 from apps.blockchain.domain.repository import IFaucetTransactionsRepository
 from apps.blockchain.domain.value_objects import (
@@ -57,6 +59,16 @@ class DjangoFaucetTransactionsRepository(IFaucetTransactionsRepository):
     def get_pending_transactions(self) -> list[FaucetTransaction]:
         qs = FaucetTransactionModel.objects.filter(status=TransactionStatus.PENDING.value)
         return [self.model_to_entity(obj) for obj in qs]
+
+    def cnt_stats(self, since_dt: DomainDateTime) -> tuple[int, int, int]:
+        """Get the number of successful, pending, and failed transactions."""
+        stats = FaucetTransactionModel.objects.filter(created_at__gte=since_dt.dt).aggregate(
+            successful=Count("id", filter=Q(status=TransactionStatus.SUCCESS.value)),
+            pending=Count("id", filter=Q(status=TransactionStatus.PENDING.value)),
+            failed=Count("id", filter=Q(status=TransactionStatus.FAILED.value)),
+        )
+
+        return stats["successful"], stats["pending"], stats["failed"]
 
     @classmethod
     def model_to_entity(cls, model: FaucetTransactionModel) -> FaucetTransaction:

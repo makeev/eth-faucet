@@ -1,7 +1,7 @@
 import logging
 from datetime import timedelta
 
-from apps.blockchain.application.dto import FaucetTransactionDTO
+from apps.blockchain.application.dto import FaucetStatsDTO, FaucetTransactionDTO
 from apps.blockchain.application.exceptions import TooManyTransactionsFromIpError, TooManyTransactionsFromWalletError
 from apps.blockchain.application.services.blockchain_service import BlockchainService
 from apps.blockchain.domain.entities import FaucetTransaction
@@ -96,3 +96,11 @@ class FaucetService:
             raise BaseValidationError(message="Error funding wallet: %s" % str(e)) from e
         else:
             return FaucetTransactionDTO.from_entity(tx)
+
+    def get_stats(self) -> FaucetStatsDTO:
+        """
+        Fetches statistics for the last 24 hours.
+        """
+        last_24_hours = DomainDateTime(DomainDateTime.now().dt - timedelta(hours=24))
+        succeeded_tx, pending_tx, total_failed = self.faucet_transactions_repository.cnt_stats(last_24_hours)
+        return FaucetStatsDTO(total_successful=succeeded_tx, total_pending=pending_tx, total_failed=total_failed)

@@ -1,7 +1,7 @@
 from rest_framework import serializers, status
 from rest_framework.views import APIView
 
-from apps.blockchain.application.dto import FaucetTransactionDTO
+from apps.blockchain.application.dto import FaucetStatsDTO, FaucetTransactionDTO
 from base.serializers import BaseSerializer
 from infrastructure.container import get_app_container
 from user_interface.utils import extend_schema
@@ -35,11 +35,10 @@ class FundWalletView(APIView):
         return TypedResponse(transaction_dto, status=status.HTTP_201_CREATED)
 
 
-# class StatsView(APIView):
-#     def get(self, request):
-#         faucet_transactions_repository = DjangoDaucetRepository()
+class StatsView(APIView):
+    @extend_schema(responses={200: FaucetStatsDTO})
+    def get(self, request) -> TypedResponse[FaucetStatsDTO]:
+        # Fetch statistics for the last 24 hours
+        stats = app_container.faucet_service().get_stats()
 
-#         # Fetch statistics for the last 24 hours
-#         stats = faucet_transactions_repository.get_statistics(last_hours=24)
-
-#         return Response(stats, status=status.HTTP_200_OK)
+        return TypedResponse(stats, status=status.HTTP_200_OK)

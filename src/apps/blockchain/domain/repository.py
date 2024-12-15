@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from apps.blockchain.domain.entities import FaucetTransaction
+from apps.shared.value_objects.datetime import DomainDateTime
 
 
 class IFaucetTransactionsRepository(ABC):
@@ -25,3 +26,6 @@ class IFaucetTransactionsRepository(ABC):
 
     @abstractmethod
     def get_pending_transactions(self) -> list[FaucetTransaction]: ...
+
+    @abstractmethod
+    def cnt_stats(self, since_dt: DomainDateTime) -> tuple[int, int, int]: ...
